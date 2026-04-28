@@ -19,19 +19,19 @@
 INSERT INTO usuarios (usuario, contrasena, nombre, email) VALUES
 (
     'admin',
-    'REEMPLAZAR_CON_HASH', -- HASH PENDIENTE: contraseña en texto plano → Admin2024!
+    '$2b$12$/yyWVI8VEtPGfklVjqAQIu32Yvn.5yN7T7aISJ7YWlUkD9vT0I6Hi', -- bcrypt cost=12
     'Administrador',
     'admin@biblioteca.udem.mx'
 ),
 (
     'ernesto',
-    'REEMPLAZAR_CON_HASH', -- HASH PENDIENTE: contraseña en texto plano → Ernesto2024!
+    '$2b$12$.M9.o9aJEtTrfFINK5hAsee85.DXFmSyT4d.L7479lO6hmE7KwIWy', -- bcrypt cost=12
     'Ernesto Vega',
     'ernesto.vega@udem.edu'
 ),
 (
     'santiago',
-    'REEMPLAZAR_CON_HASH', -- HASH PENDIENTE: contraseña en texto plano → Santiago2024!
+    '$2b$12$cZyX2086OhIbvxm1j0HS5.quCJcWCd91US4c2ZOM4GLbadsEN6lba', -- bcrypt cost=12
     'Santiago Pongutá',
     'santiago.ponguta@udem.edu'
 );
