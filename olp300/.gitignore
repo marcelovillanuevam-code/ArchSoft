@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+setup_db.sql
+hash_seed_passwords.py
