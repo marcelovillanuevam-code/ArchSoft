@@ -1,11 +1,4 @@
-from flask import (
-    Blueprint,
-    abort,
-    render_template,
-    request,
-    session,
-)
-
+from flask import Blueprint, abort, render_template, request, session, url_for
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.controllers.auth_controller import login_required
@@ -14,7 +7,7 @@ from app.services.libro_service import listar
 libro_bp = Blueprint("libro", __name__)
 
 
-@libro_bp.route("/catalogo", methods=["GET"])
+@libro_bp.route("/catalogo")
 @login_required
 def catalogo():
     page = request.args.get("page", 1, type=int)
@@ -26,29 +19,28 @@ def catalogo():
     except SQLAlchemyError:
         abort(503)
 
-    context = {
-        **resultado,
-        "usuario": session.get("nombre", ""),
-        "filtro_tipo": filtro_tipo or "",
-        "filtro_valor": filtro_valor or "",
-    }
+    resultado["usuario"] = session.get("nombre", "")
+    resultado["filtro_tipo"] = filtro_tipo or ""
+    resultado["filtro_valor"] = filtro_valor or ""
 
-    return render_template("libros/catalogo.html", **context)
+    return render_template("libros/catalogo.html", **resultado)
 
 
-@libro_bp.route("/libros/nuevo", methods=["GET"])
+# --- Stubs: se implementan en el Proyecto Final ---
+
+@libro_bp.route("/libros/nuevo")
 @login_required
 def nuevo():
     return render_template("libros/stub.html", pantalla="Nuevo Libro")
 
 
-@libro_bp.route("/libros/<isbn>", methods=["GET"])
+@libro_bp.route("/libros/<isbn>")
 @login_required
 def detalle(isbn):
     return render_template("libros/stub.html", pantalla="Detalles del Libro")
 
 
-@libro_bp.route("/libros/<isbn>/editar", methods=["GET"])
+@libro_bp.route("/libros/<isbn>/editar")
 @login_required
 def editar(isbn):
     return render_template("libros/stub.html", pantalla="Editar Libro")

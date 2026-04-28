@@ -16,47 +16,39 @@ auth_bp = Blueprint("auth", __name__)
 
 def login_required(f):
     @wraps(f)
-    def decorated(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         if not session.get("usuario"):
             return redirect(url_for("auth.login", expired=1))
         return f(*args, **kwargs)
-    return decorated
+    return wrapper
 
 
-@auth_bp.route("/login", methods=["GET"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    # Si ya esta logeado, mandarlo al catalogo
     if session.get("usuario"):
-        return redirect("/catalogo")
-    return render_template("auth/login.html")
+        return redirect(url_for("libro.catalogo"))
 
-
-@auth_bp.route("/login", methods=["POST"])
-def login_post():
-    try:
+    if request.method == "POST":
         usuario = request.form.get("usuario", "").strip()
         contrasena = request.form.get("contrasena", "")
 
-        user = autenticar(usuario, contrasena)
+        if not usuario or not contrasena:
+            return render_template("auth/login.html", error="Favor de llenar todos los campos")
 
+        user = autenticar(usuario, contrasena)
         if user is not None:
             session["usuario"] = user.usuario
             session["nombre"] = user.nombre
             session.permanent = False
-            return redirect("/catalogo")
+            return redirect(url_for("libro.catalogo"))
 
-        return render_template(
-            "auth/login.html",
-            error="Usuario o contrase\u00f1a incorrectos",
-        )
+        return render_template("auth/login.html", error="Usuario o contraseña incorrectos")
 
-    except Exception:
-        return render_template(
-            "auth/login.html",
-            error="Ocurri\u00f3 un error. Intenta de nuevo.",
-        )
+    return render_template("auth/login.html")
 
 
-@auth_bp.route("/logout", methods=["GET"])
+@auth_bp.route("/logout")
 def logout():
     session.clear()
-    return redirect("/login")
+    return redirect(url_for("auth.login"))
