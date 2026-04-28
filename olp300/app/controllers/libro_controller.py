@@ -1,1 +1,52 @@
-# Capa Controlador — Blueprint de libros (rutas /libros/*)
+from flask import Blueprint, abort, render_template, request, session, url_for
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.controllers.auth_controller import login_required
+from app.services.libro_service import listar
+
+libro_bp = Blueprint("libro", __name__)
+
+
+@libro_bp.route("/catalogo")
+@login_required
+def catalogo():
+    page = request.args.get("page", 1, type=int)
+    filtro_tipo = request.args.get("filtro_tipo", "").strip() or None
+    filtro_valor = request.args.get("filtro_valor", "").strip() or None
+
+    try:
+        resultado = listar(page, filtro_tipo, filtro_valor)
+    except SQLAlchemyError:
+        abort(503)
+
+    resultado["usuario"] = session.get("nombre", "")
+    resultado["filtro_tipo"] = filtro_tipo or ""
+    resultado["filtro_valor"] = filtro_valor or ""
+
+    return render_template("libros/catalogo.html", **resultado)
+
+
+# --- Stubs: se implementan en el Proyecto Final ---
+
+@libro_bp.route("/libros/nuevo")
+@login_required
+def nuevo():
+    return render_template("libros/stub.html", pantalla="Nuevo Libro")
+
+
+@libro_bp.route("/libros/<isbn>")
+@login_required
+def detalle(isbn):
+    return render_template("libros/stub.html", pantalla="Detalles del Libro")
+
+
+@libro_bp.route("/libros/<isbn>/editar")
+@login_required
+def editar(isbn):
+    return render_template("libros/stub.html", pantalla="Editar Libro")
+
+
+@libro_bp.route("/libros/<isbn>/eliminar", methods=["POST"])
+@login_required
+def eliminar(isbn):
+    return render_template("libros/stub.html", pantalla="Eliminar Libro")
