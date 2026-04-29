@@ -17,7 +17,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{quote_plus(_db_user)}:{quote_plus(_db_pass)}"
-        f"@{_db_host}:{_db_port}/{_db_name}"
+        f"@{_db_host}:{_db_port}/{_db_name}?charset=utf8mb4"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
