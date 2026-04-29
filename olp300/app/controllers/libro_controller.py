@@ -22,8 +22,6 @@ def catalogo():
     resultado["usuario"] = session.get("nombre", "")
     resultado["filtro_tipo"] = filtro_tipo or ""
     resultado["filtro_valor"] = filtro_valor or ""
-    resultado["page_anterior"] = resultado["pagina"] - 1
-    resultado["page_siguiente"] = resultado["pagina"] + 1
 
     return render_template("libros/catalogo.html", **resultado)
 
