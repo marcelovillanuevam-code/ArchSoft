@@ -1,1 +1,75 @@
-<!DOCTYPE html><html><body><!-- placeholder --></body></html>
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesion | OLP300{% endblock %}
+
+{% block content %}
+<section class="relative flex min-h-screen items-center justify-center bg-gray-100 px-4 py-10">
+    <!-- T04 del DET: salir desde la pantalla de login. -->
+    <button
+        type="button"
+        onclick="window.close()"
+        aria-label="Salir"
+        class="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-xl font-semibold text-gray-600 shadow-sm transition hover:border-[#B8960C] hover:text-[#B8960C]"
+    >
+        X
+    </button>
+
+    <div class="w-full max-w-md">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900">Libreria de la Universidad</h1>
+            <p class="mt-2 text-sm font-medium text-[#B8960C]">Universidad de Monterrey</p>
+        </div>
+
+        <div class="rounded-lg bg-white p-8 shadow-lg ring-1 ring-gray-200">
+            <h2 class="mb-6 text-center text-2xl font-semibold text-gray-900">Iniciar sesion</h2>
+
+            {% if error %}
+            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            {% if request.args.get('expired') %}
+            <div class="mb-4 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+                Tu sesion ha expirado. Por favor inicia sesion nuevamente.
+            </div>
+            {% endif %}
+
+            <form action="/login" method="post" class="space-y-5">
+                <div>
+                    <label for="usuario" class="mb-2 block text-sm font-medium text-gray-700">Usuario (Matricula/Nomina)</label>
+                    <input
+                        id="usuario"
+                        name="usuario"
+                        type="text"
+                        placeholder="Ingresa tu matricula o nomina"
+                        class="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:border-[#B8960C] focus:ring-2 focus:ring-[#B8960C]/20"
+                    >
+                </div>
+
+                <div>
+                    <label for="contrasena" class="mb-2 block text-sm font-medium text-gray-700">Contrasena</label>
+                    <input
+                        id="contrasena"
+                        name="contrasena"
+                        type="password"
+                        placeholder="Ingresa tu contrasena"
+                        class="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:border-[#B8960C] focus:ring-2 focus:ring-[#B8960C]/20"
+                    >
+                </div>
+
+                <div class="text-right text-sm">
+                    <span class="text-gray-500">Olvidaste tu contrasena?</span>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full rounded-md bg-[#B8960C] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9F820A] focus:outline-none focus:ring-2 focus:ring-[#B8960C]/40"
+                >
+                    Iniciar sesion
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

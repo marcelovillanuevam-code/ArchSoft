@@ -1,1 +1,171 @@
-<!DOCTYPE html><html><body><!-- placeholder --></body></html>
+{% extends 'base.html' %}
+
+{% block title %}Catalogo de Libros | OLP300{% endblock %}
+
+{% block content %}
+<section class="min-h-[calc(100vh-4rem)] bg-gray-50 px-6 py-8">
+    <div class="mx-auto max-w-7xl">
+        <div class="mb-8 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900">Libros</h1>
+                <p class="mt-2 text-base text-gray-600">Pestana para administrar los libros que se encuentran en el sistema</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a
+                    href="/libros/nuevo"
+                    class="inline-flex items-center justify-center rounded-md bg-[#B8960C] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9F820A]"
+                >
+                    Nuevo Libro +
+                </a>
+                <a
+                    href="/logout"
+                    aria-label="Cerrar sesion"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-lg font-semibold text-gray-600 shadow-sm transition hover:border-red-300 hover:text-red-600"
+                >
+                    X
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <form action="/catalogo" method="get" class="flex flex-col gap-3 md:flex-row md:items-center">
+                <select
+                    name="filtro_tipo"
+                    class="h-11 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#B8960C] focus:ring-2 focus:ring-[#B8960C]/20"
+                >
+                    <option value="" {% if filtro_tipo == '' %}selected{% endif %}>-- Filtrar por --</option>
+                    <option value="titulo" {% if filtro_tipo == 'titulo' %}selected{% endif %}>Titulo</option>
+                    <option value="autor" {% if filtro_tipo == 'autor' %}selected{% endif %}>Autor</option>
+                    <option value="isbn" {% if filtro_tipo == 'isbn' %}selected{% endif %}>ISBN</option>
+                </select>
+
+                <input
+                    name="filtro_valor"
+                    type="text"
+                    value="{{ filtro_valor }}"
+                    placeholder="Escribe el valor a buscar"
+                    class="h-11 flex-1 rounded-md border border-gray-300 px-4 text-sm outline-none transition focus:border-[#B8960C] focus:ring-2 focus:ring-[#B8960C]/20"
+                >
+
+                <button
+                    type="submit"
+                    class="h-11 rounded-md bg-gray-900 px-5 text-sm font-semibold text-white transition hover:bg-gray-700"
+                >
+                    Buscar
+                </button>
+
+                {% if filtro_valor %}
+                <a href="/catalogo" class="text-sm font-medium text-[#B8960C] hover:underline">Limpiar filtro</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Titulo</th>
+                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Autor(es)</th>
+                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">ISBN</th>
+                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Estado</th>
+                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Copias</th>
+                            <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-600">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        {% for libro in libros %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-5 py-4 text-sm font-medium text-gray-900">{{ libro.titulo }}</td>
+                            <td class="px-5 py-4 text-sm text-gray-700">{{ libro.autor }}</td>
+                            <td class="px-5 py-4 text-sm text-gray-700">{{ libro.ISBN }}</td>
+                            <td class="px-5 py-4 text-sm">
+                                {% set estado = libro.estado.value|default(libro.estado, true) %}
+                                {% if estado == 'disponible' %}
+                                <span class="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">disponible</span>
+                                {% elif estado == 'prestado' %}
+                                <span class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">prestado</span>
+                                {% elif estado == 'mantenimiento' %}
+                                <span class="inline-flex rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800">mantenimiento</span>
+                                {% elif estado == 'perdido' %}
+                                <span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">perdido</span>
+                                {% else %}
+                                <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">{{ estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-5 py-4 text-sm text-gray-700">{{ libro.numero_copias }}</td>
+                            <td class="px-5 py-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a
+                                        href="/libros/{{ libro.ISBN }}"
+                                        class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-[#B8960C] hover:text-[#B8960C]"
+                                    >
+                                        Ver detalles
+                                    </a>
+                                    <a
+                                        href="/libros/{{ libro.ISBN }}/editar"
+                                        aria-label="Editar libro"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
+                                    >
+                                        ✎
+                                    </a>
+                                    <form action="/libros/{{ libro.ISBN }}/eliminar" method="post" onsubmit='return confirm("Eliminar este libro?")'>
+                                        <button
+                                            type="submit"
+                                            aria-label="Eliminar libro"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-600 transition hover:border-red-300 hover:text-red-600"
+                                        >
+                                            🗑
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="px-5 py-10 text-center text-sm text-gray-500">
+                                No se encontraron libros.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <p class="text-sm text-gray-600">{{ total }} libro(s) encontrado(s)</p>
+
+            <div class="flex items-center gap-3">
+                {% if hay_anterior %}
+                <a
+                    href="/catalogo?page={{ page_anterior }}&filtro_tipo={{ filtro_tipo|urlencode }}&filtro_valor={{ filtro_valor|urlencode }}"
+                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#B8960C] hover:text-[#B8960C]"
+                >
+                    Anterior
+                </a>
+                {% else %}
+                <span class="cursor-not-allowed rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">
+                    Anterior
+                </span>
+                {% endif %}
+
+                <span class="text-sm font-medium text-gray-700">Pagina {{ pagina }} de {{ paginas }}</span>
+
+                {% if hay_siguiente %}
+                <a
+                    href="/catalogo?page={{ page_siguiente }}&filtro_tipo={{ filtro_tipo|urlencode }}&filtro_valor={{ filtro_valor|urlencode }}"
+                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#B8960C] hover:text-[#B8960C]"
+                >
+                    Siguiente
+                </a>
+                {% else %}
+                <span class="cursor-not-allowed rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">
+                    Siguiente
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,1 +1,21 @@
-<!DOCTYPE html><html><body><!-- placeholder --></body></html>
+{% extends 'base.html' %}
+
+{% block title %}{{ pantalla }} | OLP300{% endblock %}
+
+{% block content %}
+<section class="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 py-12">
+    <div class="max-w-xl text-center">
+        <div class="mb-6 text-7xl" aria-hidden="true">🚧</div>
+        <h1 class="text-3xl font-bold text-gray-900">{{ pantalla }}</h1>
+        <p class="mt-4 text-base text-gray-600">
+            Esta pantalla esta en construccion y estara disponible proximamente.
+        </p>
+        <a
+            href="/catalogo"
+            class="mt-8 inline-flex items-center justify-center rounded-md bg-[#B8960C] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9F820A]"
+        >
+            Volver al Catalogo
+        </a>
+    </div>
+</section>
+{% endblock %}
