@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Nuevo Libro' if modo == 'nuevo' else 'Edición de Libro' }} | OLP300{% endblock %}
+
+{% block content %}
+<section class="min-h-[calc(100vh-4rem)] bg-gray-50 px-6 py-8">
+    <div class="mx-auto max-w-3xl">
+
+        <div class="mb-8 flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gray-900">
+                {{ 'Nuevo Libro' if modo == 'nuevo' else 'Edición de Libro' }}
+            </h1>
+            <a
+                href="/catalogo"
+                class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-[#B8960C] hover:text-[#B8960C]"
+            >
+                Volver
+            </a>
+        </div>
+
+        {% if '_general' in errores %}
+        <div class="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ errores['_general'] }}
+        </div>
+        {% endif %}
+
+        <div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+            <form
+                action="{{ url_for('libro.nuevo') if modo == 'nuevo' else url_for('libro.editar', isbn=libro['ISBN']) }}"
+                method="post"
+                class="space-y-5"
+            >
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Título *</label>
+                    <input
+                        name="titulo"
+                        type="text"
+                        value="{{ libro['titulo'] if libro else '' }}"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'titulo' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'titulo' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['titulo'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Autor(es) *</label>
+                    <input
+                        name="autor"
+                        type="text"
+                        value="{{ libro['autor'] if libro else '' }}"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'autor' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'autor' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['autor'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Editorial *</label>
+                    <input
+                        name="editorial"
+                        type="text"
+                        value="{{ libro['editorial'] if libro else '' }}"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'editorial' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'editorial' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['editorial'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">ISBN *</label>
+                    <input
+                        name="ISBN"
+                        type="text"
+                        value="{{ libro['ISBN'] if libro else '' }}"
+                        {% if modo == 'editar' %}readonly{% endif %}
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if modo == 'editar' %}border-gray-300 bg-gray-100 cursor-not-allowed
+                            {% elif 'ISBN' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'ISBN' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['ISBN'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Sinopsis *</label>
+                    <textarea
+                        name="sinopsis"
+                        rows="4"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'sinopsis' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >{{ libro['sinopsis'] if libro else '' }}</textarea>
+                    {% if 'sinopsis' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['sinopsis'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Año de publicación *</label>
+                        <input
+                            name="anio_publicacion"
+                            type="number"
+                            value="{{ libro['anio_publicacion'] if libro else '' }}"
+                            class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                                {% if 'anio_publicacion' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                                {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                        >
+                        {% if 'anio_publicacion' in errores %}
+                        <p class="mt-1 text-xs text-red-600">{{ errores['anio_publicacion'] }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Número de páginas *</label>
+                        <input
+                            name="numero_paginas"
+                            type="number"
+                            value="{{ libro['numero_paginas'] if libro else '' }}"
+                            class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                                {% if 'numero_paginas' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                                {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                        >
+                        {% if 'numero_paginas' in errores %}
+                        <p class="mt-1 text-xs text-red-600">{{ errores['numero_paginas'] }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Precio *</label>
+                        <input
+                            name="precio"
+                            type="number"
+                            step="0.01"
+                            value="{{ libro['precio'] if libro else '' }}"
+                            class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                                {% if 'precio' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                                {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                        >
+                        {% if 'precio' in errores %}
+                        <p class="mt-1 text-xs text-red-600">{{ errores['precio'] }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Número de copias *</label>
+                        <input
+                            name="numero_copias"
+                            type="number"
+                            value="{{ libro['numero_copias'] if libro else '' }}"
+                            class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                                {% if 'numero_copias' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                                {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                        >
+                        {% if 'numero_copias' in errores %}
+                        <p class="mt-1 text-xs text-red-600">{{ errores['numero_copias'] }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Ubicación *</label>
+                    <input
+                        name="ubicacion"
+                        type="text"
+                        value="{{ libro['ubicacion'] if libro else '' }}"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'ubicacion' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'ubicacion' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['ubicacion'] }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Categoría *</label>
+                    <input
+                        name="categoria"
+                        type="text"
+                        value="{{ libro['categoria'] if libro else '' }}"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'categoria' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                    {% if 'categoria' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['categoria'] }}</p>
+                    {% endif %}
+                </div>
+
+                {% if modo == 'editar' %}
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700">Estado *</label>
+                    <select
+                        name="estado"
+                        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none transition focus:ring-2
+                            {% if 'estado' in errores %}border-red-500 focus:border-red-500 focus:ring-red-500/20
+                            {% else %}border-gray-300 focus:border-[#B8960C] focus:ring-[#B8960C]/20{% endif %}"
+                    >
+                        {% for valor in ['disponible', 'prestado', 'mantenimiento', 'perdido'] %}
+                        <option value="{{ valor }}" {{ 'selected' if libro and libro.get('estado') == valor }}>
+                            {{ valor | capitalize }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if 'estado' in errores %}
+                    <p class="mt-1 text-xs text-red-600">{{ errores['estado'] }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="pt-2">
+                    <button
+                        type="submit"
+                        class="w-full rounded-md bg-[#B8960C] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9F820A] focus:outline-none focus:ring-2 focus:ring-[#B8960C]/40"
+                    >
+                        {{ 'Guardar Libro' if modo == 'nuevo' else 'Actualizar Libro' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
