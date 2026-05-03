@@ -16,8 +16,6 @@ def create_app(config_name="default"):
         from app.models.libro import Libro  # noqa: F401
         from app.models.usuario import Usuario  # noqa: F401
         db.create_all()
-        from app.seeds import seed_db
-        seed_db()
 
     from app.controllers.auth_controller import auth_bp
     from app.controllers.libro_controller import libro_bp
