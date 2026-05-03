@@ -109,15 +109,16 @@
                                     >
                                         ✎
                                     </a>
-                                    <form action="/libros/{{ libro.ISBN }}/eliminar" method="post" onsubmit='return confirm("Eliminar este libro?")'>
-                                        <button
-                                            type="submit"
-                                            aria-label="Eliminar libro"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-600 transition hover:border-red-300 hover:text-red-600"
-                                        >
-                                            🗑
-                                        </button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        data-isbn="{{ libro.ISBN }}"
+                                        data-titulo="{{ libro.titulo }}"
+                                        onclick="abrirModalEliminar(this)"
+                                        aria-label="Eliminar libro"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-gray-600 transition hover:border-red-300 hover:text-red-600"
+                                    >
+                                        🗑
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -167,5 +168,49 @@
             </div>
         </div>
     </div>
+
+    <div id="modal-eliminar" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+        <div class="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-gray-900">Confirmar eliminación</h3>
+            <p class="mb-6 text-sm text-gray-600">
+                ¿Estás seguro(a) que quieres eliminar el libro
+                <span id="modal-titulo" class="font-semibold text-gray-900"></span>?
+            </p>
+            <form id="form-eliminar" action="" method="post">
+                <div class="flex justify-end gap-3">
+                    <button
+                        type="button"
+                        onclick="cerrarModalEliminar()"
+                        class="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-400"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </section>
+
+<script>
+function abrirModalEliminar(btn) {
+    document.getElementById('modal-titulo').textContent = btn.dataset.titulo;
+    document.getElementById('form-eliminar').action = '/libros/' + btn.dataset.isbn + '/eliminar';
+    const modal = document.getElementById('modal-eliminar');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function cerrarModalEliminar() {
+    const modal = document.getElementById('modal-eliminar');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
 {% endblock %}

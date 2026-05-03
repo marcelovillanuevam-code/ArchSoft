@@ -43,7 +43,7 @@ def login():
             session.permanent = False
             return redirect(url_for("libro.catalogo"))
 
-        return render_template("auth/login.html", error="Usuario o contraseña incorrectos")
+        return render_template("auth/login.html", error="Usuario no encontrado")
 
     return render_template("auth/login.html")
 
